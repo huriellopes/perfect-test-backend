@@ -33,6 +33,9 @@
     29 => 'App\\Providers\\AuthServiceProvider',
     30 => 'App\\Providers\\EventServiceProvider',
     31 => 'App\\Providers\\RouteServiceProvider',
+    32 => 'App\\Architecture\\Client\\Providers\\ClientServiceProvider',
+    33 => 'App\\Architecture\\Product\\Providers\\ProductServiceProvider',
+    34 => 'App\\Architecture\\Sale\\Providers\\SaleServiceProvider',
   ),
   'eager' => 
   array (
@@ -55,6 +58,9 @@
     16 => 'App\\Providers\\AuthServiceProvider',
     17 => 'App\\Providers\\EventServiceProvider',
     18 => 'App\\Providers\\RouteServiceProvider',
+    19 => 'App\\Architecture\\Client\\Providers\\ClientServiceProvider',
+    20 => 'App\\Architecture\\Product\\Providers\\ProductServiceProvider',
+    21 => 'App\\Architecture\\Sale\\Providers\\SaleServiceProvider',
   ),
   'deferred' => 
   array (

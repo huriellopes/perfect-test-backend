@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'America/Sao_Paulo',
 
     /*
     |--------------------------------------------------------------------------
@@ -174,6 +174,13 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+
+        /**
+         * ServiceProvider
+         */
+        App\Architecture\Client\Providers\ClientServiceProvider::class,
+        App\Architecture\Product\Providers\ProductServiceProvider::class,
+        App\Architecture\Sale\Providers\SaleServiceProvider::class,
 
     ],
 

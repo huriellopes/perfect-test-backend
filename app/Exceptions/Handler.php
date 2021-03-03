@@ -2,11 +2,20 @@
 
 namespace App\Exceptions;
 
+use App\Enum\StatusEnum;
+use App\Traits\Requests;
+use Dotenv\Exception\ValidationException;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
+use Whoops\Exception\ErrorException;
 
 class Handler extends ExceptionHandler
 {
+    use Requests;
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -40,16 +49,48 @@ class Handler extends ExceptionHandler
     }
 
     /**
-     * Render an exception into an HTTP response.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
-     * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @throws \Throwable
+     * @param \Illuminate\Http\Request $request
+     * @param Throwable $exception
+     * @return JsonResponse|\Illuminate\Http\JsonResponse|\Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
+     * @throws Throwable
      */
     public function render($request, Throwable $exception)
     {
-        return parent::render($request, $exception);
+        if ($request->wantsJson() || strpos($request->url(), 'api') !== false) {
+            return $this->handleApiException($exception);
+        } else {
+            return parent::render($request, $exception);
+        }
+    }
+
+    /**
+     * Trata as exceções para api
+     *
+     * @param Throwable $exception
+     * @return JsonResponse
+     */
+    private function handleApiException(Throwable $exception): JsonResponse
+    {
+        if ($exception instanceof SystemException) {
+            $response['message'] = $exception->getMessage();
+            $response['status'] = StatusEnum::BAD_REQUEST;
+        } else if ($exception instanceof NotFoundHttpException) {
+            $response['message'] = StatusEnum::MESSAGE_NOT_FOUND;
+            $response['status'] = StatusEnum::NOT_FOUND;
+        } else if ($exception instanceof AuthorizationException) {
+            $response['message'] = StatusEnum::MESSAGE_UNAUTHORIZED;
+            $response['status'] = StatusEnum::UNAUTHORIZED;
+        } else if ($exception instanceof ValidationException) {
+            $response['message'] = $exception->validator->getMessageBag();
+            $response['status'] = StatusEnum::UNPROCESSABLE_ENTITY;
+        } else if ($exception instanceof ErrorException) {
+            $response['message'] = StatusEnum::MESSAGE_SERVER_ERROR;
+            $response['status'] = StatusEnum::SERVER_ERROR;
+        } else {
+            $response['message'] = StatusEnum::MESSAGE_BAD_REQUEST;
+            $response['status'] = StatusEnum::BAD_REQUEST;
+        }
+
+        return $this->returnResponse($response['message'], $response['status'], $exception);
     }
 }

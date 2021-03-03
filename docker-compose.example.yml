@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  server:
+    container_name: servidor
+    image: huriellopes/php-nginx
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./:/app
+    ports:
+      - 80:80
+    networks:
+      - desafio_perfectpay
+
+  database:
+    container_name: db
+    image: mysql:5.7
+    environment:
+      MYSQL_USER: "root"
+      MYSQL_ROOT_PASSWORD: "YOUR_PASSWORD"
+      MYSQL_DATABASE: "DATABASE_NAME"
+    restart: always
+    ports:
+      - 3306:3306
+    networks:
+      - desafio_perfectpay
+
+networks:
+  desafio_perfectpay:
